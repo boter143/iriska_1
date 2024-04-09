@@ -21,3 +21,14 @@ def menu_frep() -> ReplyKeyboardMarkup:
     )
 
     return keyboard.as_markup(resize_keyboard=True)
+
+
+# Кнопка после отправки
+def send_video_frep() -> ReplyKeyboardMarkup:
+    keyboard = ReplyKeyboardBuilder()
+
+    keyboard.row(
+        rkb('✔️ Остановить')
+    )
+
+    return keyboard.as_markup(resize_keyboard=True)

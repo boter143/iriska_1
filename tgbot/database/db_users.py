@@ -20,6 +20,7 @@ class UserModel(BaseModel):
 class Userx():
     storage_name = 'storage_users'
 
+    # Добавление user'а
     @staticmethod
     def add(user_id: int):
         user_balance = 0
@@ -58,6 +59,14 @@ class Userx():
                 response = UserModel(**response)
 
             return response
+
+    # Получение id всех записей
+    @staticmethod
+    def get_all_id():
+        with sq.connect(PATH_DATABASE) as con:
+            total_id = con.execute(f'SELECT user_id FROM {Userx.storage_name}').fetchall()
+
+            return total_id
 
     # Получение количества всех записей
     @staticmethod

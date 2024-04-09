@@ -8,6 +8,7 @@ env.read_env()
 BOT_TOKEN = env.str('BOT_TOKEN')
 ADMIN_ID = env.int('ADMIN_ID')
 DISCORD_LINK = env.str('DISCORD_LINK')
+CHAT_ID = env.int('CHAT_ID')
 
 # consts
 PY_VERSION = python_version()

@@ -20,7 +20,7 @@ def create_dbx():
         ############################################################
         # Создание Таблицы с хранением пользователей
         if len(con.execute("PRAGMA table_info(storage_users)").fetchall()) == 5:
-            print("DB was found(1/2)")
+            print("DB(storage_users) was found(1/2)")
         else:
             con.execute(
                 ded(f"""
@@ -33,23 +33,23 @@ def create_dbx():
                                 )
                             """)
             )
-            print("DB was not found(1/2) | Creating...")
+            print("DB(storage_users) was not found(1/2) | Creating...")
 
         if len(con.execute("PRAGMA table_info(storage_video)").fetchall()) == 5:
-            print("DB was found(2/2)")
+            print("DB(storage_video) was found(2/2)")
         else:
             con.execute(
                 ded(f"""
                                 CREATE TABLE storage_video(
                                     increment INTEGER PRIMARY KEY AUTOINCREMENT,
                                     video_id INTEGER,
-                                    chat_id INTEGER,
-                                    duration INTEGER,
-                                    size INTEGER
+                                    video_name TEXT,
+                                    video_size INTEGER,
+                                    video_duration INTEGER
                                 )
                             """)
             )
-            print("DB was not found(2/2) | Creating...")
+            print("DB(storage_video) was not found(2/2) | Creating...")
 
 
 # Форматирование запроса с аргументами

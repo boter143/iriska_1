@@ -1,0 +1,94 @@
+from aiogram import Router, F, Bot
+from aiogram.types import Message, CallbackQuery
+from aiogram.fsm.state import StatesGroup, State
+from aiogram.fsm.context import FSMContext
+
+from tgbot.database.db_users import Userx
+from tgbot.database.db_video import Videox
+from tgbot.keyboards.reply_main import send_video_frep, menu_frep
+from tgbot.data.config import CHAT_ID
+from tgbot.utils.const_functions import convert_date, get_unix
+
+router = Router(name=__name__)
+
+
+class sendVideo(StatesGroup):
+    take_message = State()
+
+
+# Запуск приёмщика видео
+@router.message(F.text == '📹 Отправить видео')
+async def about_video(message: Message, state: FSMContext):
+    await message.answer('⚠ Можно отправлять несколько видео за раз\n\n'
+                         'Если хотите остановиться, нажмите на кнопку снизу',
+                         reply_markup=send_video_frep())
+
+    await state.update_data(count_video='0')
+    await state.update_data(count_unic_video=0)
+
+    await state.set_state(sendVideo.take_message)
+
+
+@router.message(sendVideo.take_message)
+async def filter_video(message: Message, state: FSMContext, bot: Bot):
+    if message.video:
+        state_data = await state.get_data()
+
+        # Данные о видео
+        video_name = message.video.file_name
+        video_size = message.video.file_size
+        video_duration = message.video.duration
+
+        # Изменение количества присланных видео
+        new_count_video = int(state_data['count_video']) + 1
+        await state.update_data(count_video=new_count_video)
+
+        # Проверка на уникальность видео
+        if Videox.video_unic(video_name=video_name, video_size=video_size, video_duration=video_duration):
+            # Счётчик уникальных видео
+            new_count_unic_video = int(state_data['count_unic_video']) + 1
+            await state.update_data(count_unic_video=new_count_unic_video)
+
+            # Пересылка видео в тгк
+            try:
+                channel_message_copy = await bot.copy_message(from_chat_id=message.from_user.id, chat_id=CHAT_ID,
+                                                              message_id=message.message_id)
+                channel_message_id = int(channel_message_copy.message_id)
+                await bot.edit_message_caption(chat_id=CHAT_ID, message_id=channel_message_id, caption=None)
+            except:
+                pass
+
+            # Добавление видео в дб
+            try:
+                Videox.add(video_id=channel_message_id, video_name=video_name, video_size=video_size,
+                           video_duration=video_duration)
+            except:
+                pass
+
+            # Пересылка всем, кто с доступом
+            try:
+                all_user_id = Userx.get_all_id()
+                # Перебор для пересылки нового видео из тгк
+                for user_id in all_user_id:
+                    user_id = user_id[0]
+                    # Проверка на одинаковый чат + доступ
+                    user = Userx.get(user_id=user_id)
+                    if user_id != message.from_user.id and user.user_unix > get_unix():
+                        await bot.copy_message(from_chat_id=CHAT_ID, chat_id=user_id,
+                                               message_id=channel_message_id)
+            except:
+                pass
+
+            await state.set_state(sendVideo.take_message)
+    else:
+        if message.text == '✔️ Остановить':
+            state_data = await state.get_data()
+            time_up = state_data['count_unic_video'] * 5
+            Userx.user_uptime(message.from_user.id, time_up)
+            await message.answer(f"Уникальных: {state_data['count_unic_video']}/{state_data['count_video']} видео\n\n"
+                                 f"Добавлено: {time_up} минут доступа!",
+                                 reply_markup=menu_frep())
+            await state.clear()
+        else:
+            await message.answer('⚠ Не верный формат сообщения!')
+            await state.set_state(sendVideo.take_message)

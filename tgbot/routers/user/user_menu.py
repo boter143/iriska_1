@@ -5,7 +5,7 @@ from aiogram.types import Message
 from aiogram.filters import Command
 
 from tgbot.database.db_users import Userx
-from tgbot.keyboards.reply_main import menu_frep
+from tgbot.keyboards.reply_main import menu_frep, send_video_frep
 from tgbot.keyboards.inline_main import discord_link_finl
 from tgbot.data.config import DISCORD_LINK
 from tgbot.utils.const_functions import convert_date, get_date, get_unix
@@ -75,15 +75,11 @@ async def profile(message: Message):
     await message.answer(f'<b>ℹ️ Информация</b>\n\n'
                          f'Данный бот создан специально для <u>анонимного</u> обмена интимными видео 18+\n\n'
                          f'Чтобы отправить видео нужно нажать соответсвующую кнопку снизу\n\n'
+                         f'1 реферал = 10 минут доступа\n'
+                         f'1 видео = 5 минут доступа\n\n'
                          f'<b>СТРОГО ЗАПРЕЩЕНО:</b>\n'
                          f'1. ЦП\n'
                          f'2. PeД0Filия\n'
                          f'3. СПАМ\n'
                          f'4. Присылать боту видео не соответствующего характера\n\n'
                          f'За те или иные действия предусмотрено наказание по усмотрению администратора или модератора')
-
-
-##### [📹 Отправить видео] #####
-@router.message(F.text == '📹 Отправить видео')
-async def profile(message: Message):
-    await message.answer('❗ Временно не работает!')
