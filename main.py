@@ -21,12 +21,8 @@ async def on_startup(bot: Bot):
                                      f'➖➖➖➖➖➖➖➖\n')
 
 
-def on_shutdown():
-    print('Бот выключен')
-
-
-async def mainS():
-    bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mWode='HTML'))  # Образ Бота
+async def main():
+    bot = Bot(token=BOT_TOKEN, default=DefaultBotProperties(parse_mode='HTML'))  # Образ Бота
     dp = Dispatcher()  # Образ Диспетчера
 
     register_all_routers(dp)  # Подключение всех роутеров
