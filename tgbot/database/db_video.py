@@ -76,3 +76,12 @@ class Videox():
                 (video_name, video_size, video_duration)).fetchall()
 
             return not bool(len(result))
+
+    @staticmethod
+    def video_delete(video_id):
+        with sq.connect(PATH_DATABASE) as con:
+            try:
+                con.execute(f'DELETE FROM {Videox.storage_name} WHERE video_id = ?', (video_id,))
+                return True
+            except:
+                return False

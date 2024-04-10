@@ -20,7 +20,7 @@ async def admin_ban_unban_user(call: CallbackQuery, state: FSMContext):
     await state.set_state(BanUser.choose_user)
 
 
-# Бан/разбан пользователя
+# Бан пользователя за видео
 @router.message(BanUser.choose_user)
 async def choose_user_to_ban(message: Message, bot: Bot, state: FSMContext):
     try:
@@ -30,7 +30,8 @@ async def choose_user_to_ban(message: Message, bot: Bot, state: FSMContext):
             if answer:
                 await message.answer(f'⛔ Пользователь {user_to_ban} был <b>забанен</b>')
                 await bot.send_message(chat_id=user_to_ban, text='⛔ Вы были забанены администратором!\n'
-                                                                 'Теперь Вы не сможете отправлять видео')
+                                                                 'Теперь Вы не сможете отправлять видео\n\n'
+                                                                 '<b>Причина:</b> Без объяснения.')
             else:
                 await message.answer(f'✅ Пользователь {user_to_ban} был <b>разбанен</b>')
                 await bot.send_message(chat_id=user_to_ban, text='✅ Вы были разбанены администратором!\n'
