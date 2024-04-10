@@ -38,11 +38,15 @@ async def start(message: Message, bot: Bot):
     # Обработка команды в чате
     await message.answer(f'Discord (на случай блокировки)\n\n{DISCORD_LINK}', reply_markup=discord_link_finl())
     try:
-        await bot.pin_chat_message(chat_id=message.from_user.id, message_id=message.message_id + 1)
+        if referral_id != '' and message.from_user.id != referral_id and Userx.user_check_ref(referral_id):
+            await bot.pin_chat_message(chat_id=message.from_user.id, message_id=message.message_id + 2)
+        else:
+            await bot.pin_chat_message(chat_id=message.from_user.id, message_id=message.message_id + 1)
+
     except:
         pass
     await message.answer(
-        '👋 Приветствую тебя, дорогой пользователь в самом лучшем боте по <u>анонимному</u> видео обмену.\n\n'
+        '👋 Приветствую тебя в самом лучшем боте по <u>анонимному</u> видео обмену.\n\n'
         '✨ Чтобы начать, попробуй отправить своё первое интимное видео',
         reply_markup=menu_frep())
 

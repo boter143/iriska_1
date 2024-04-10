@@ -11,7 +11,8 @@ user_commands = [
 # Admin команды
 admin_commands = [
     BotCommand(command='start', description='♻️ Перезапустить бота'),
-    BotCommand(command='admin', description='👑 Админ-панель')
+    BotCommand(command='admin', description='👑 Админ-панель'),
+    BotCommand(command='db', description='📦 Получить Базу Данных'),
 ]
 
 
