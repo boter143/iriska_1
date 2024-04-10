@@ -14,6 +14,7 @@ class UserModel(BaseModel):
     user_balance: int
     user_referral: int
     user_unix: int
+    user_ban: int
 
 
 # Работа с юзером
@@ -26,6 +27,7 @@ class Userx():
         user_balance = 0
         user_referral = 0
         user_unix = get_unix()
+        user_ban = 0
 
         with sq.connect(PATH_DATABASE) as con:
             con.execute(
@@ -34,14 +36,16 @@ class Userx():
                                     user_id,
                                     user_balance,
                                     user_referral,
-                                    user_unix
-                                ) VALUES (?, ?, ?, ?)
+                                    user_unix,
+                                    user_ban
+                                ) VALUES (?, ?, ?, ?, ?)
                             """),
                 [
                     user_id,
                     user_balance,
                     user_referral,
                     user_unix,
+                    user_ban,
                 ],
             )
 
@@ -68,6 +72,17 @@ class Userx():
 
             return total_id
 
+    @staticmethod
+    def user_ban_unban(user_id):
+        with sq.connect(PATH_DATABASE) as con:
+            user = Userx.get(user_id=user_id)
+            if user.user_ban == 0:
+                con.execute(f'UPDATE {Userx.storage_name} SET user_ban = ?', (1,))
+                return True
+            else:
+                con.execute(f'UPDATE {Userx.storage_name} SET user_ban = ?', (0,))
+                return False
+
     # Получение количества всех записей
     @staticmethod
     def get_all_count():
@@ -75,6 +90,14 @@ class Userx():
             total_count = con.execute(f'SELECT * FROM {Userx.storage_name}').fetchall()
 
             return len(total_count)
+
+    # Проверка на запись пользователя в бд
+    @staticmethod
+    def user_exist(user_id):
+        with sq.connect(PATH_DATABASE) as con:
+            result = con.execute(f'SELECT * FROM {Userx.storage_name} WHERE user_id = ?', (user_id,)).fetchone()
+
+            return bool(len(result))
 
     # Проверка на правдивость реферальной ссылки
     @staticmethod

@@ -21,7 +21,7 @@ def admin_panel_finl() -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
 
     keyboard.row(
-        ikb("⛔️ Забанить", data='admin_ban_user')
+        ikb("⛔️ Забанить", data='admin_ban_unban_user')
     )
     keyboard.row(
         ikb("⏰ Время", data='admin_add_time')

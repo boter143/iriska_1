@@ -31,7 +31,8 @@ async def about_video(message: Message, state: FSMContext):
 
 @router.message(sendVideo.take_message)
 async def filter_video(message: Message, state: FSMContext, bot: Bot):
-    if message.video:
+    user = Userx.get(user_id=int(message.from_user.id))
+    if message.video and user.user_ban != 1:
         state_data = await state.get_data()
 
         # Данные о видео
@@ -71,7 +72,7 @@ async def filter_video(message: Message, state: FSMContext, bot: Bot):
                 # Перебор для пересылки нового видео из тгк
                 for user_id in all_user_id:
                     user_id = user_id[0]
-                    # Проверка на одинаковый чат + доступ
+                    # Проверка на одинаковый чат + доступ + проверка на бан
                     user = Userx.get(user_id=user_id)
                     if user_id != message.from_user.id and user.user_unix > get_unix():
                         await bot.copy_message(from_chat_id=CHAT_ID, chat_id=user_id,
@@ -89,6 +90,9 @@ async def filter_video(message: Message, state: FSMContext, bot: Bot):
                                  f"Добавлено: {time_up} минут доступа!",
                                  reply_markup=menu_frep())
             await state.clear()
+        elif user.user_ban == 1:
+            await message.answer('⛔ Вы были забанены администратором!\n'
+                                 'Вы не можете отправлять видео')
         else:
             await message.answer('⚠ Не верный формат сообщения!')
             await state.set_state(sendVideo.take_message)
