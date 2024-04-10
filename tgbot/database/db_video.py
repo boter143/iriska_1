@@ -14,6 +14,7 @@ class UserModel(BaseModel):
     video_name: str
     video_size: int
     video_duration: int
+    user_id: int
 
 
 class Videox():
@@ -21,7 +22,7 @@ class Videox():
 
     # Добавление user'а
     @staticmethod
-    def add(video_id: int, video_name: str, video_size: int, video_duration: int):
+    def add(video_id: int, video_name: str, video_size: int, video_duration: int, user_id: int):
         with sq.connect(PATH_DATABASE) as con:
             con.execute(
                 ded(f"""
@@ -29,17 +30,42 @@ class Videox():
                                     video_id,
                                     video_name,
                                     video_size,
-                                    video_duration
+                                    video_duration,
+                                    user_id
                                     
-                                ) VALUES (?, ?, ?, ?)
+                                ) VALUES (?, ?, ?, ?, ?)
                             """),
                 [
                     video_id,
                     video_name,
                     video_size,
                     video_duration,
+                    user_id,
                 ],
             )
+
+    # Получение записи
+    @staticmethod
+    def get(**kwargs) -> UserModel:
+        with sq.connect(PATH_DATABASE) as con:
+            con.row_factory = dict_factory
+            sql = f"SELECT * FROM {Videox.storage_name}"
+            sql, parameters = update_format_where(sql, kwargs)
+
+            response = con.execute(sql, parameters).fetchone()
+
+            if response is not None:
+                response = UserModel(**response)
+
+            return response
+
+    # Получение всех id записей
+    @staticmethod
+    def get_all_id():
+        with sq.connect(PATH_DATABASE) as con:
+            total_id = con.execute(f'SELECT video_id FROM {Videox.storage_name}').fetchall()
+
+            return total_id
 
     # Проверка на уникальное видео
     @staticmethod

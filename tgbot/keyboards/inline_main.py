@@ -21,10 +21,23 @@ def admin_panel_finl() -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
 
     keyboard.row(
-        ikb("⛔️ Забанить", data='admin_ban_unban_user')
+        ikb("⛔️ Забанить", data='admin_ban_unban_user'),
+        ikb("⏰ Время", data='admin_add_time')
     )
     keyboard.row(
-        ikb("⏰ Время", data='admin_add_time')
+        ikb("🛠 Модерация видео", data='admin_moderation_video')
+    )
+
+    return keyboard.as_markup()
+
+
+# Кнопки под видео-модерацию
+def admin_moderation_finl() -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.row(
+        ikb("Принять", data='moderation_access'),
+        ikb("Забанить", data='moderation_ban')
     )
 
     return keyboard.as_markup()

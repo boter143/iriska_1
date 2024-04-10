@@ -62,7 +62,7 @@ async def filter_video(message: Message, state: FSMContext, bot: Bot):
             # Добавление видео в дб
             try:
                 Videox.add(video_id=channel_message_id, video_name=video_name, video_size=video_size,
-                           video_duration=video_duration)
+                           video_duration=video_duration, user_id=message.from_user.id)
             except:
                 pass
 

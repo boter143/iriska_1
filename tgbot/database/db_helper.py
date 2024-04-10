@@ -36,7 +36,7 @@ def create_dbx():
             )
             print("DB(storage_users) was not found(1/2) | Creating...")
 
-        if len(con.execute("PRAGMA table_info(storage_video)").fetchall()) == 5:
+        if len(con.execute("PRAGMA table_info(storage_video)").fetchall()) == 6:
             print("DB(storage_video) was found(2/2)")
         else:
             con.execute(
@@ -46,7 +46,8 @@ def create_dbx():
                                     video_id INTEGER,
                                     video_name TEXT,
                                     video_size INTEGER,
-                                    video_duration INTEGER
+                                    video_duration INTEGER,
+                                    user_id INTEGER
                                 )
                             """)
             )

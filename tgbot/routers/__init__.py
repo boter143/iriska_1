@@ -1,7 +1,7 @@
 from aiogram import Dispatcher, F
 
 from tgbot.routers.user import user_menu, user_video
-from tgbot.routers.admin import admin_menu, admin_time, admin_ban
+from tgbot.routers.admin import admin_menu, admin_time, admin_ban, admin_moderation
 from tgbot.utils.misc.bot_filters import IsAdmin
 
 
@@ -15,6 +15,8 @@ def register_all_routers(dp: Dispatcher):
     admin_time.router.callback_query.filter(IsAdmin())
     admin_ban.router.message.filter(IsAdmin())
     admin_ban.router.callback_query.filter(IsAdmin())
+    admin_moderation.router.message.filter(IsAdmin())
+    admin_moderation.router.callback_query.filter(IsAdmin())
 
     # Подключение роутеров
     dp.include_router(user_video.router)  # user
@@ -22,3 +24,4 @@ def register_all_routers(dp: Dispatcher):
     dp.include_router(admin_menu.router)  # admin
     dp.include_router(admin_time.router)  # admin
     dp.include_router(admin_ban.router)  # admin
+    dp.include_router(admin_moderation.router)  # admin
