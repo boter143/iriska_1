@@ -1,2 +1,2 @@
-# ignore db
-*.db
+# ignore database.db
+tgbot/data/database.db
