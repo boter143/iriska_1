@@ -72,6 +72,7 @@ class Userx():
 
             return total_id
 
+    # ban / unban
     @staticmethod
     def user_ban_unban(user_id):
         with sq.connect(PATH_DATABASE) as con:
@@ -120,7 +121,7 @@ class Userx():
             con.execute(f'UPDATE {Userx.storage_name} SET user_referral = ? WHERE user_id = ?',
                         (referral_id, user_id,))
 
-    # + ко времени пользователю
+    # Изменение времени пользователю
     @staticmethod
     def user_uptime(user_id, minutes):
         user = Userx.get(user_id=user_id)
@@ -133,3 +134,12 @@ class Userx():
             else:
                 con.execute(f'UPDATE {Userx.storage_name} SET user_unix = ? WHERE user_id = ?',
                             ((user.user_unix + 60 * minutes), user_id,))
+
+    # Изменение баланса пользователя
+    @staticmethod
+    def user_change_balance(user_id, count):
+        user = Userx.get(user_id=user_id)
+
+        with sq.connect(PATH_DATABASE) as con:
+            con.execute(f'UPDATE {Userx.storage_name} SET user_balance = ? WHERE user_id = ?',
+                        ((user.user_balance + count), user_id,))

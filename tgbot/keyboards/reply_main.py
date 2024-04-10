@@ -13,6 +13,10 @@ def menu_frep() -> ReplyKeyboardMarkup:
     )
 
     keyboard.row(
+        rkb('⚡️ VIP'),
+    )
+
+    keyboard.row(
         rkb('ℹ️ Информация')
     )
 
