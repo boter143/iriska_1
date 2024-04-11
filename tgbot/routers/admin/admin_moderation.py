@@ -53,7 +53,19 @@ async def admin_moderation_access(call: CallbackQuery, bot: Bot, state: FSMConte
         return
 
     try:
+        last_video = Videox.get(video_id=all_video_id[video_index - 1][0])
+        if last_video.video_check == 0:
+            Videox.video_change_status(video_id=all_video_id[video_index - 1][0])
+    except:
+        pass
+
+    try:
         video = Videox.get(video_id=all_video_id[video_index][0])
+
+        if video.video_check == 1:
+            while video.video_check == 1:
+                video_index += 1
+                video = Videox.get(video_id=all_video_id[video_index][0])
 
         await state.update_data(video_index=video_index + 1)
     except:

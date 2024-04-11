@@ -1,3 +1,5 @@
+from random import randint
+
 import numbersystem
 
 from aiogram import Router, Bot, F
@@ -6,10 +8,12 @@ from aiogram.types import Message, CallbackQuery
 from aiogram.filters import Command
 
 from tgbot.database.db_users import Userx
+from tgbot.database.db_video import Videox
 from tgbot.keyboards.reply_main import menu_frep, send_video_frep
-from tgbot.keyboards.inline_main import discord_link_finl, balance_add_finl, vip_tariffs
+from tgbot.keyboards.inline_main import discord_link_finl, balance_add_finl, premium_tariffs, archive_tariffs
 from tgbot.data.config import DISCORD_LINK, MINUTES_PER_VIDEO, MINUTES_PER_REFERRAL
 from tgbot.utils.const_functions import convert_date, get_date, get_unix
+from tgbot.utils.mics_functions import send_archive_video_to_user
 
 router = Router(name=__name__)
 
@@ -107,16 +111,16 @@ async def profile(message: Message, state: FSMContext):
                          f'За те или иные действия предусмотрено наказание по усмотрению администратора или модератора')
 
 
-##### [⚡️ VIP] #####
-@router.message(F.text == '⚡️ VIP')
+##### [⚡️ PREMIUM] #####
+@router.message(F.text == '⚡️ PREMIUM')
 async def profile(message: Message, state: FSMContext):
     await state.clear()
-    await message.answer(f'💨 Успейте купить VIP по самой низкой цене!', reply_markup=vip_tariffs())
+    await message.answer(f'💨 Успейте купить PREMIUM по самой низкой цене!', reply_markup=premium_tariffs())
 
 
-##### [ 3 дня vip ] #####
-@router.callback_query(F.data == '3days_vip')
-async def vip_buy(call: CallbackQuery, state: FSMContext):
+##### [ 3 дня PREMIUM ] #####
+@router.callback_query(F.data == '3days_premium')
+async def premium_buy(call: CallbackQuery, state: FSMContext):
     await state.clear()
     amount = 300
     minutes = 60 * 24 * 3
@@ -131,9 +135,9 @@ async def vip_buy(call: CallbackQuery, state: FSMContext):
         Userx.user_uptime(user_id=call.from_user.id, minutes=minutes)
 
 
-##### [ 7 дней vip ] #####
-@router.callback_query(F.data == '7days_vip')
-async def vip_buy(call: CallbackQuery, state: FSMContext):
+##### [ 7 дней PREMIUM ] #####
+@router.callback_query(F.data == '7days_premium')
+async def premium_buy(call: CallbackQuery, state: FSMContext):
     await state.clear()
     amount = 600
     minutes = 60 * 24 * 7
@@ -143,14 +147,14 @@ async def vip_buy(call: CallbackQuery, state: FSMContext):
     if user.user_balance < amount:
         await call.answer('🚫 Недостаточно средств на балансе!')
     else:
-        await call.message.answer('✅ Было добавлено 3 дня доступа!')
+        await call.message.answer('✅ Было добавлено 7 дней доступа!')
         Userx.user_change_balance(call.from_user.id, -amount)
         Userx.user_uptime(user_id=call.from_user.id, minutes=minutes)
 
 
-##### [ 14 дней vip ] #####
-@router.callback_query(F.data == '14days_vip')
-async def vip_buy(call: CallbackQuery, state: FSMContext):
+##### [ 14 дней PREMIUM ] #####
+@router.callback_query(F.data == '14days_premium')
+async def premium_buy(call: CallbackQuery, state: FSMContext):
     await state.clear()
     amount = 1000
     minutes = 60 * 24 * 14
@@ -160,6 +164,58 @@ async def vip_buy(call: CallbackQuery, state: FSMContext):
     if user.user_balance < amount:
         await call.answer('🚫 Недостаточно средств на балансе!')
     else:
-        await call.message.answer('✅ Было добавлено 3 дня доступа!')
+        await call.message.answer('✅ Было добавлено 14 дней доступа!')
         Userx.user_change_balance(call.from_user.id, -amount)
         Userx.user_uptime(user_id=call.from_user.id, minutes=minutes)
+
+
+##### [ 🗂 Архив ] #####
+@router.message(F.text == '🗂 Архив')
+async def archive(message: Message):
+    await message.answer(f'У нас в базе {len(Videox.get_all_id())}{randint(0, 9)} видео',
+                         reply_markup=archive_tariffs())
+
+
+##### [ 100 архив ] #####
+@router.callback_query(F.data == '100_archive')
+async def premium_buy(call: CallbackQuery, state: FSMContext, bot: Bot):
+    await state.clear()
+    amount = 100
+
+    user = Userx.get(user_id=call.from_user.id)
+
+    if user.user_balance < amount:
+        await call.answer('🚫 Недостаточно средств на балансе!')
+    else:
+        await call.message.answer(f'✅ Успешная покупка {amount} видео!')
+        await send_archive_video_to_user(call.from_user.id, amount, user.video_index, bot)
+
+
+##### [ 300 архив ] #####
+@router.callback_query(F.data == '300_archive')
+async def premium_buy(call: CallbackQuery, state: FSMContext, bot: Bot):
+    await state.clear()
+    amount = 300
+
+    user = Userx.get(user_id=call.from_user.id)
+
+    if user.user_balance < amount:
+        await call.answer('🚫 Недостаточно средств на балансе!')
+    else:
+        await call.message.answer(f'✅ Успешная покупка {amount} видео!')
+        await send_archive_video_to_user(call.from_user.id, amount, user.video_index, bot)
+
+
+##### [ 700 архив ] #####
+@router.callback_query(F.data == '700_archive')
+async def premium_buy(call: CallbackQuery, state: FSMContext, bot: Bot):
+    await state.clear()
+    amount = 700
+
+    user = Userx.get(user_id=call.from_user.id)
+
+    if user.user_balance < amount:
+        await call.answer('🚫 Недостаточно средств на балансе!')
+    else:
+        await call.message.answer(f'✅ Успешная покупка {amount} видео!')
+        await send_archive_video_to_user(call.from_user.id, amount, user.video_index, bot)

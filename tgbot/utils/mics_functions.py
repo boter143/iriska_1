@@ -15,6 +15,7 @@ from tgbot.utils.const_functions import get_unix
 async def send_archive_video_to_all(bot: Bot):
     index = 0
     list_off = False
+
     while True:
         try:
             all_users_id = Userx.get_all_id()
@@ -37,4 +38,28 @@ async def send_archive_video_to_all(bot: Bot):
         else:
             index += 1
 
-        await asyncio.sleep(randint(60, 90))
+        await asyncio.sleep(randint(45, 90))
+
+
+async def send_archive_video_to_user(user_id, amount, index, bot: Bot):
+    index = index
+    trys = 0
+
+    while trys < amount:
+        try:
+            videos_id = Videox.get_all_id()
+        except:
+            pass
+
+        try:
+            await bot.copy_message(from_chat_id=CHAT_ID, chat_id=user_id, message_id=videos_id[index][0])
+            index += 1
+        except:
+            index += 1
+
+        trys += 1
+        await asyncio.sleep(randint(3, 10))
+
+    bot.send_message(chat_id=user_id, text=f'✅ Было переслано {amount} видео')
+
+    Userx.user_change_index_video(user_id=user_id, count=amount)

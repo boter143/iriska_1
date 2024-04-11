@@ -66,20 +66,6 @@ async def filter_video(message: Message, state: FSMContext, bot: Bot):
             except:
                 pass
 
-            # Пересылка всем, кто с доступом
-            try:
-                all_user_id = Userx.get_all_id()
-                # Перебор для пересылки нового видео из тгк
-                for user_id in all_user_id:
-                    user_id = user_id[0]
-                    # Проверка на одинаковый чат + доступ + проверка на бан
-                    user = Userx.get(user_id=user_id)
-                    if user_id != message.from_user.id and user.user_unix > get_unix():
-                        await bot.copy_message(from_chat_id=CHAT_ID, chat_id=user_id,
-                                               message_id=channel_message_id)
-            except:
-                pass
-
             await state.set_state(sendVideo.take_message)
     else:
         if message.text == '✔️ Остановить':

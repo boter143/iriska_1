@@ -19,7 +19,7 @@ def create_dbx():
     with sq.connect(PATH_DATABASE) as con:
         ############################################################
         # Создание Таблицы с хранением пользователей
-        if len(con.execute("PRAGMA table_info(storage_users)").fetchall()) == 6:
+        if len(con.execute("PRAGMA table_info(storage_users)").fetchall()) == 7:
             print("DB(storage_users) was found(1/2)")
         else:
             con.execute(
@@ -30,13 +30,14 @@ def create_dbx():
                                     user_balance INTEGER,
                                     user_referral INTEGER,
                                     user_unix INTEGER,
-                                    user_ban INTEGER
+                                    user_ban INTEGER,
+                                    video_index INTEGER
                                 )
                             """)
             )
             print("DB(storage_users) was not found(1/2) | Creating...")
 
-        if len(con.execute("PRAGMA table_info(storage_video)").fetchall()) == 6:
+        if len(con.execute("PRAGMA table_info(storage_video)").fetchall()) == 7:
             print("DB(storage_video) was found(2/2)")
         else:
             con.execute(
@@ -47,7 +48,8 @@ def create_dbx():
                                     video_name TEXT,
                                     video_size INTEGER,
                                     video_duration INTEGER,
-                                    user_id INTEGER
+                                    user_id INTEGER,
+                                    video_check INTEGER
                                 )
                             """)
             )

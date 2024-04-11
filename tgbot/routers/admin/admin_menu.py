@@ -10,6 +10,7 @@ from tgbot.utils.const_functions import get_date
 router = Router(name=__name__)
 
 
+# Админ-панель
 @router.message(Command(commands=['admin']))
 async def admin_menu(message: Message):
     await message.answer(f'<b>👑 Админ-панель</b>\n\n'
@@ -17,6 +18,7 @@ async def admin_menu(message: Message):
                          reply_markup=admin_panel_finl())
 
 
+# Бэк-ап db
 @router.message(Command(commands=['db', 'database']))
 async def admin_database(message: Message):
     await message.answer_document(

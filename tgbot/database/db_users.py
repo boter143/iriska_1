@@ -15,6 +15,7 @@ class UserModel(BaseModel):
     user_referral: int
     user_unix: int
     user_ban: int
+    video_index: int
 
 
 # Работа с юзером
@@ -28,6 +29,7 @@ class Userx():
         user_referral = 0
         user_unix = get_unix()
         user_ban = 0
+        video_index = 0
 
         with sq.connect(PATH_DATABASE) as con:
             con.execute(
@@ -37,8 +39,9 @@ class Userx():
                                     user_balance,
                                     user_referral,
                                     user_unix,
-                                    user_ban
-                                ) VALUES (?, ?, ?, ?, ?)
+                                    user_ban,
+                                    video_index
+                                ) VALUES (?, ?, ?, ?, ?, ?)
                             """),
                 [
                     user_id,
@@ -46,6 +49,7 @@ class Userx():
                     user_referral,
                     user_unix,
                     user_ban,
+                    video_index,
                 ],
             )
 
@@ -143,3 +147,12 @@ class Userx():
         with sq.connect(PATH_DATABASE) as con:
             con.execute(f'UPDATE {Userx.storage_name} SET user_balance = ? WHERE user_id = ?',
                         ((user.user_balance + count), user_id,))
+
+    # Изменение index видео
+    @staticmethod
+    def user_change_index_video(user_id, count):
+        user = Userx.get(user_id=user_id)
+
+        with sq.connect(PATH_DATABASE) as con:
+            con.execute(f'UPDATE {Userx.storage_name} SET user_balance = ? WHERE user_id = ?',
+                        (count, user_id,))

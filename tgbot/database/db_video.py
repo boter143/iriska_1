@@ -15,6 +15,7 @@ class UserModel(BaseModel):
     video_size: int
     video_duration: int
     user_id: int
+    video_check: int
 
 
 class Videox():
@@ -23,6 +24,8 @@ class Videox():
     # Добавление user'а
     @staticmethod
     def add(video_id: int, video_name: str, video_size: int, video_duration: int, user_id: int):
+        video_check = 0
+
         with sq.connect(PATH_DATABASE) as con:
             con.execute(
                 ded(f"""
@@ -31,9 +34,10 @@ class Videox():
                                     video_name,
                                     video_size,
                                     video_duration,
-                                    user_id
+                                    user_id,
+                                    video_check
                                     
-                                ) VALUES (?, ?, ?, ?, ?)
+                                ) VALUES (?, ?, ?, ?, ?, ?)
                             """),
                 [
                     video_id,
@@ -41,6 +45,7 @@ class Videox():
                     video_size,
                     video_duration,
                     user_id,
+                    video_check,
                 ],
             )
 
@@ -77,6 +82,7 @@ class Videox():
 
             return not bool(len(result))
 
+    # Удаление видео
     @staticmethod
     def video_delete(video_id):
         with sq.connect(PATH_DATABASE) as con:
@@ -85,3 +91,19 @@ class Videox():
                 return True
             except:
                 return False
+
+    # Получение статуса проверки
+    @staticmethod
+    def video_check_status(video_id):
+        with sq.connect(PATH_DATABASE) as con:
+            status = con.execute(f'SELECT video_check FROM {Videox.storage_name} WHERE video_id = ?', (video_id,))
+            if bool(status[0]):
+                return True
+            else:
+                return False
+
+    # Изменение статуса проверки
+    @staticmethod
+    def video_change_status(video_id):
+        with sq.connect(PATH_DATABASE) as con:
+            con.execute(f'UPDATE {Videox.storage_name} SET video_check = ? WHERE video_id = ?', (1, video_id,))

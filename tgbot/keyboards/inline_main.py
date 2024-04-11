@@ -21,9 +21,14 @@ def admin_panel_finl() -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
 
     keyboard.row(
+        ikb("💰 Добавить / Убавить", data='admin_change_balance')
+    )
+
+    keyboard.row(
         ikb("⛔️ Бан / ✅ Разбан", data='admin_ban_unban_user'),
         ikb("⏰ Время", data='admin_add_time')
     )
+
     keyboard.row(
         ikb("🛠 Модерация видео", data='admin_moderation_video')
     )
@@ -85,19 +90,38 @@ def pay_link_finl(link) -> InlineKeyboardMarkup:
 
 
 # Тарифы VIP
-def vip_tariffs() -> InlineKeyboardMarkup:
+def premium_tariffs() -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
 
     keyboard.row(
-        ikb("3 дня - 300 berrycoins", data="3days_vip")
+        ikb("3 дня - 300 berrycoins", data="3days_premium")
     )
 
     keyboard.row(
-        ikb("7 дней - 600 berrycoins", data="7days_vip")
+        ikb("7 дней - 600 berrycoins", data="7days_premium")
     )
 
     keyboard.row(
-        ikb("14 дней - 1000 berrycoins", data="14days_vip")
+        ikb("14 дней - 1000 berrycoins", data="14days_premium")
+    )
+
+    return keyboard.as_markup()
+
+
+# Тарифы архив
+def archive_tariffs() -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.row(
+        ikb("100 видео - 200 berrycoins", data="100_archive")
+    )
+
+    keyboard.row(
+        ikb("300 видео - 500 berrycoins", data="300_archive")
+    )
+
+    keyboard.row(
+        ikb("700 видео - 1000 berrycoins", data="700_archive")
     )
 
     return keyboard.as_markup()
