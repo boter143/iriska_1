@@ -23,14 +23,20 @@ async def send_archive_video_to_all(bot: Bot):
         except:
             pass
 
-        for user_id in all_users_id:
-            user_id = user_id[0]
+        try:
+            videos_id[index][0]
+        except:
+            list_off = True
 
-            if Userx.get(user_id=user_id).user_unix > get_unix():
-                try:
-                    await bot.copy_message(from_chat_id=CHAT_ID, chat_id=user_id, message_id=videos_id[index][0])
-                except:
-                    list_off = True
+        if not list_off:
+            for user_id in all_users_id:
+                user_id = user_id[0]
+
+                if Userx.get(user_id=user_id).user_unix > get_unix():
+                    try:
+                        await bot.copy_message(from_chat_id=CHAT_ID, chat_id=user_id, message_id=videos_id[index][0])
+                    except:
+                        pass
 
         if list_off:
             index = 0

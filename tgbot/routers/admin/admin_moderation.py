@@ -20,7 +20,10 @@ class AdminModeration(StatesGroup):
 # Обработка запроса на модерацию видео
 @router.callback_query(F.data == 'admin_moderation_video')
 async def start_admin_moderation(call: CallbackQuery, bot: Bot, state: FSMContext):
-    all_video_id = Videox.get_all_id()
+    try:
+        all_video_id = Videox.get_all_id()
+    except:
+        await call.answer('⚠️ Ошибка!')
 
     if not bool(len(all_video_id)):
         await call.message.answer('⚠️ Нет видео для модерации!', reply_markup=menu_frep())
@@ -50,7 +53,6 @@ async def admin_moderation_access(call: CallbackQuery, bot: Bot, state: FSMConte
         all_video_id = Videox.get_all_id()
     except:
         await call.answer('⚠️ Ошибка!')
-        return
 
     try:
         last_video = Videox.get(video_id=all_video_id[video_index - 1][0])
@@ -174,3 +176,9 @@ async def admin_moderation_ban(call: CallbackQuery, bot: Bot, state: FSMContext)
                                reply_markup=admin_moderation_finl())
     except:
         pass
+
+
+# Обработка остановки
+@router.message(F.text == '✔️ Остановить')
+async def stop_moderation(message: Message):
+    await message.answer('Модерация завершена!', reply_markup=menu_frep())

@@ -8,7 +8,7 @@ from tgbot.database.db_helper import update_format_where, dict_factory
 
 
 # Модель таблицы
-class UserModel(BaseModel):
+class VideoModel(BaseModel):
     increment: int
     video_id: int
     video_name: str
@@ -21,10 +21,12 @@ class UserModel(BaseModel):
 class Videox():
     storage_name = 'storage_video'
 
-    # Добавление user'а
+    # Добавление видео
     @staticmethod
     def add(video_id: int, video_name: str, video_size: int, video_duration: int, user_id: int):
         video_check = 0
+        if video_name is None:
+            video_name = 'none'
 
         with sq.connect(PATH_DATABASE) as con:
             con.execute(
@@ -51,7 +53,7 @@ class Videox():
 
     # Получение записи
     @staticmethod
-    def get(**kwargs) -> UserModel:
+    def get(**kwargs) -> VideoModel:
         with sq.connect(PATH_DATABASE) as con:
             con.row_factory = dict_factory
             sql = f"SELECT * FROM {Videox.storage_name}"
@@ -60,7 +62,7 @@ class Videox():
             response = con.execute(sql, parameters).fetchone()
 
             if response is not None:
-                response = UserModel(**response)
+                response = VideoModel(**response)
 
             return response
 
