@@ -37,6 +37,10 @@ def admin_moderation_finl() -> InlineKeyboardMarkup:
 
     keyboard.row(
         ikb("✅ Принять", data='moderation_access'),
+        ikb("❌️Удалить", data='moderation_delete')
+    )
+
+    keyboard.row(
         ikb("⛔️ Забанить", data='moderation_ban')
     )
 

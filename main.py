@@ -5,6 +5,7 @@ from aiogram.client.bot import DefaultBotProperties
 
 from tgbot.data.config import BOT_TOKEN, ADMIN_ID, PY_VERSION
 from tgbot.routers import register_all_routers
+from tgbot.utils.mics_functions import send_archive_video_to_all
 from tgbot.utils.misc.bot_commands import set_commands
 from tgbot.middlewares import register_all_middlewares
 from tgbot.database.db_helper import create_dbx
@@ -38,6 +39,10 @@ async def main():
 
         await bot.delete_webhook()
         await bot.get_updates(offset=-1)
+
+        # Постоянная отправка видео всем
+        loop = asyncio.get_running_loop()
+        loop.create_task(send_archive_video_to_all(bot))
 
         await dp.start_polling(bot)
     except:

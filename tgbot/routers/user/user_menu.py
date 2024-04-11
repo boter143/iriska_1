@@ -8,7 +8,7 @@ from aiogram.filters import Command
 from tgbot.database.db_users import Userx
 from tgbot.keyboards.reply_main import menu_frep, send_video_frep
 from tgbot.keyboards.inline_main import discord_link_finl, balance_add_finl, vip_tariffs
-from tgbot.data.config import DISCORD_LINK
+from tgbot.data.config import DISCORD_LINK, MINUTES_PER_VIDEO, MINUTES_PER_REFERRAL
 from tgbot.utils.const_functions import convert_date, get_date, get_unix
 
 router = Router(name=__name__)
@@ -18,19 +18,26 @@ router = Router(name=__name__)
 @router.message(Command(commands=['start']))
 async def start(message: Message, bot: Bot, state: FSMContext):
     await state.clear()
+
+    user = Userx.get(user_id=message.from_user.id)
+
+    if user.user_referral == 0:
+        first_start = True
+    else:
+        first_start = False
+
     # Проверка на реферала
     referral_id = message.text[7:]
     if referral_id != '':
         referral_id = numbersystem.octalToDecimal(int(message.text[7:]))
         try:
             if message.from_user.id != referral_id and Userx.user_check_ref(referral_id):
-                user = Userx.get(user_id=message.from_user.id)
                 if user.user_referral == 0:
                     Userx.user_add_ref(message.from_user.id, referral_id)
-                    Userx.user_uptime(referral_id, 10)
+                    Userx.user_uptime(referral_id, MINUTES_PER_REFERRAL)
                     try:
                         await bot.send_message(referral_id, 'У Вас новый реферал!\n'
-                                                            '+ 10 минут к доступу')
+                                                            f'+ {MINUTES_PER_REFERRAL} минут к доступу')
                     except:
                         pass
             else:
@@ -55,6 +62,10 @@ async def start(message: Message, bot: Bot, state: FSMContext):
         '✨ Чтобы начать, попробуй отправить своё первое интимное видео',
         reply_markup=menu_frep())
 
+    if first_start:
+        await message.answer('🎁 Вам было выдано 10 минут PREMIUM за регистрацию!')
+        Userx.user_uptime(user_id=message.from_user.id, minutes=10)
+
 
 ##### [👤 Профиль] #####
 @router.message(F.text == '👤 Профиль')
@@ -74,7 +85,7 @@ async def profile(message: Message, bot: Bot, state: FSMContext):
                          f'🆔: <code>{message.from_user.id}</code>\n\n'
                          f'💵: {user.user_balance} berrycoins\n\n'
                          f'🔗 Реферальная ссылка:\n'
-                         f'<code>https://t.me/{bot_tag.username}?start={numbersystem.decimalToOctal(message.from_user.id)}</code>\n\n'
+                         f'<code>t.me/{bot_tag.username}?start={numbersystem.decimalToOctal(message.from_user.id)}</code>\n\n'
                          f'👥 Кол-во рефералов: {0}\n\n'
                          f'{response}', reply_markup=balance_add_finl())
 
@@ -86,8 +97,8 @@ async def profile(message: Message, state: FSMContext):
     await message.answer(f'<b>ℹ️ Информация</b>\n\n'
                          f'Данный бот создан специально для <u>анонимного</u> обмена интимными видео 18+\n\n'
                          f'Чтобы отправить видео нужно нажать соответсвующую кнопку снизу\n\n'
-                         f'1 реферал = 10 минут доступа\n'
-                         f'1 видео = 5 минут доступа\n\n'
+                         f'1 реферал = {MINUTES_PER_REFERRAL} минутам доступа\n'
+                         f'1 видео = {MINUTES_PER_VIDEO} минутам доступа\n\n'
                          f'<b>СТРОГО ЗАПРЕЩЕНО:</b>\n'
                          f'1. ЦП\n'
                          f'2. PeД0Filия\n'

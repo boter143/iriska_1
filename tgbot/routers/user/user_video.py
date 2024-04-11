@@ -6,7 +6,7 @@ from aiogram.fsm.context import FSMContext
 from tgbot.database.db_users import Userx
 from tgbot.database.db_video import Videox
 from tgbot.keyboards.reply_main import send_video_frep, menu_frep
-from tgbot.data.config import CHAT_ID
+from tgbot.data.config import CHAT_ID, MINUTES_PER_VIDEO
 from tgbot.utils.const_functions import convert_date, get_unix
 
 router = Router(name=__name__)
@@ -84,7 +84,7 @@ async def filter_video(message: Message, state: FSMContext, bot: Bot):
     else:
         if message.text == '✔️ Остановить':
             state_data = await state.get_data()
-            time_up = state_data['count_unic_video'] * 5
+            time_up = state_data['count_unic_video'] * MINUTES_PER_VIDEO
             Userx.user_uptime(message.from_user.id, time_up)
             await message.answer(f"Уникальных: {state_data['count_unic_video']}/{state_data['count_video']} видео\n\n"
                                  f"Добавлено: {time_up} минут доступа!",
