@@ -102,11 +102,40 @@ async def admin_moderation_ban(call: CallbackQuery, bot: Bot, state: FSMContext)
 
     # Удаление видео везде
     try:
+        # ОБРАБОТКА ВЫДАЧИ ПРЕДУПРЕЖДЕНИЯ/БАНА ПОЛЬЗОВАТЕЛЮ!
+        user_video_ban = Userx.get(user_id=video_ban.user_id)
+
+        if user_video_ban.user_warnings < 3:
+            try:
+                await bot.send_message(chat_id=user_video_ban.user_id,
+                                       text=f'❗️ Вам было выдано предупреждение {user_video_ban.user_warnings + 1}/3\n'
+                                            f'<b>Причина:</b> Нарушение правил.')
+            except:
+                pass
+            Userx.user_add_warning(user_id=user_video_ban.user_id, warnings=user_video_ban.user_warnings)
+        else:
+            user_video_ban_id = user_video_ban.user_id
+            if Userx.get(user_id=user_video_ban_id).user_ban == 0:
+                Userx.user_ban_unban(user_video_ban_id)
+                await call.message.answer(
+                    f'⛔ Пользователь {user_video_ban_id} был <b>забанен</b>!\n'
+                    f'☑️ Видео {video_ban.video_id} было удалено!')
+                try:
+                    await bot.send_message(chat_id=user_video_ban_id, text='⛔ Вы были забанены администратором!\n'
+                                                                           'Теперь Вы не сможете отправлять видео\n\n'
+                                                                           '<b>Причина:</b> Было отправлено более 3 некорректных видео.')
+                except:
+                    pass
+            else:
+                await call.message.answer(f'⛔ Пользователь {user_video_ban_id} уже забанен!\n'
+                                          f'☑️ Видео {video_ban.video_id} было удалено!')
+
+        Userx.user_uptime(user_id=user_video_ban.user_id, minutes=-3)
         Videox.video_delete(video_ban.video_id)
         await bot.delete_message(chat_id=CHAT_ID, message_id=video_ban.video_id)
         await call.message.answer(f'☑️ Видео {video_ban.video_id} было удалено!')
 
-    except:
+    except ValueError:
         await call.message.answer('⚠️ Некорректный id видео!\n')
 
     try:

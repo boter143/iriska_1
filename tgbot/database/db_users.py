@@ -16,6 +16,7 @@ class UserModel(BaseModel):
     user_unix: int
     user_ban: int
     video_index: int
+    user_warnings: int
 
 
 # Работа с юзером
@@ -30,6 +31,7 @@ class Userx():
         user_unix = get_unix()
         user_ban = 0
         video_index = 0
+        user_warnings = 0
 
         with sq.connect(PATH_DATABASE) as con:
             con.execute(
@@ -40,8 +42,9 @@ class Userx():
                                     user_referral,
                                     user_unix,
                                     user_ban,
-                                    video_index
-                                ) VALUES (?, ?, ?, ?, ?, ?)
+                                    video_index,
+                                    user_warnings
+                                ) VALUES (?, ?, ?, ?, ?, ?, ?)
                             """),
                 [
                     user_id,
@@ -50,6 +53,7 @@ class Userx():
                     user_unix,
                     user_ban,
                     video_index,
+                    user_warnings,
                 ],
             )
 
@@ -156,3 +160,10 @@ class Userx():
         with sq.connect(PATH_DATABASE) as con:
             con.execute(f'UPDATE {Userx.storage_name} SET user_balance = ? WHERE user_id = ?',
                         (count, user_id,))
+
+    # Добавление warr пользователю
+    @staticmethod
+    def user_add_warning(user_id, warnings):
+        with sq.connect(PATH_DATABASE) as con:
+            con.execute(f'UPDATE {Userx.storage_name} SET user_warnings = ? WHERE user_id = ?',
+                        ((warnings + 1), user_id,))

@@ -29,6 +29,7 @@ async def about_video(message: Message, state: FSMContext):
     await state.set_state(sendVideo.take_message)
 
 
+# Обработка отправленного сообщения в приёмщик
 @router.message(sendVideo.take_message)
 async def filter_video(message: Message, state: FSMContext, bot: Bot):
     user = Userx.get(user_id=int(message.from_user.id))

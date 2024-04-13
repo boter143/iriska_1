@@ -21,16 +21,27 @@ def admin_panel_finl() -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()
 
     keyboard.row(
+        ikb("🛠 Модерация видео", data='admin_moderation_video')
+    )
+
+    keyboard.row(
+        ikb("👤 Пользователь", data='admin_user')
+    )
+
+    return keyboard.as_markup()
+
+
+# Кнопки для манипуляции пользователем
+def admin_user_finl(ban_btn) -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.row(
         ikb("💰 Добавить / Убавить", data='admin_change_balance')
     )
 
     keyboard.row(
-        ikb("⛔️ Бан / ✅ Разбан", data='admin_ban_unban_user'),
-        ikb("⏰ Время", data='admin_add_time')
-    )
-
-    keyboard.row(
-        ikb("🛠 Модерация видео", data='admin_moderation_video')
+        ikb(ban_btn, data='admin_ban_unban_user'),
+        ikb("⏰ Время", data='admin_change_time')
     )
 
     return keyboard.as_markup()

@@ -19,7 +19,7 @@ def create_dbx():
     with sq.connect(PATH_DATABASE) as con:
         ############################################################
         # Создание Таблицы с хранением пользователей
-        if len(con.execute("PRAGMA table_info(storage_users)").fetchall()) == 7:
+        if len(con.execute("PRAGMA table_info(storage_users)").fetchall()) == 8:
             print("DB(storage_users) was found(1/2)")
         else:
             con.execute(
@@ -31,7 +31,8 @@ def create_dbx():
                                     user_referral INTEGER,
                                     user_unix INTEGER,
                                     user_ban INTEGER,
-                                    video_index INTEGER
+                                    video_index INTEGER,
+                                    user_warnings INTEGER
                                 )
                             """)
             )
