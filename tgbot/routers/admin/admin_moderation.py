@@ -154,9 +154,12 @@ async def admin_moderation_ban(call: CallbackQuery, bot: Bot, state: FSMContext)
             await call.message.answer(
                 f'⛔ Пользователь {user_to_ban} был <b>забанен</b>!\n'
                 f'☑️ Видео {video_ban.video_id} было удалено!')
-            await bot.send_message(chat_id=user_to_ban, text='⛔ Вы были забанены администратором!\n'
-                                                             'Теперь Вы не сможете отправлять видео\n\n'
-                                                             '<b>Причина:</b> Было отправленно не корректное видео.')
+            try:
+                await bot.send_message(chat_id=user_to_ban, text='⛔ Вы были забанены администратором!\n'
+                                                                 'Теперь Вы не сможете отправлять видео\n\n'
+                                                                 '<b>Причина:</b> Было отправлено не корректное видео.')
+            except:
+                pass
         else:
             await call.message.answer(f'⛔ Пользователь {user_to_ban} уже забанен!\n'
                                       f'☑️ Видео {video_ban.video_id} было удалено!')

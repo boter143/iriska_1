@@ -82,10 +82,10 @@ class Userx():
         with sq.connect(PATH_DATABASE) as con:
             user = Userx.get(user_id=user_id)
             if user.user_ban == 0:
-                con.execute(f'UPDATE {Userx.storage_name} SET user_ban = ?', (1,))
+                con.execute(f'UPDATE {Userx.storage_name} SET user_ban = ? WHERE user_id = ?', (1, user_id,))
                 return True
             else:
-                con.execute(f'UPDATE {Userx.storage_name} SET user_ban = ?', (0,))
+                con.execute(f'UPDATE {Userx.storage_name} SET user_ban = ? WHERE user_id = ?', (0, user_id))
                 return False
 
     # Получение количества всех записей

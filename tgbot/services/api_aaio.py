@@ -26,14 +26,17 @@ async def create_pay_link(amount, order_id):
 
 async def check_status(user_id, order_id, amount, bot: Bot):
     while True:
-        if await client.is_expired(order_id):  # если счёт просрочен
-            break
-        elif await client.is_success(order_id):  # если оплата прошла успешно
-            Userx.user_change_balance(user_id=user_id, count=amount)
-            try:
-                await bot.send_message(chat_id=user_id, text=f'ID заказа: {order_id}\n\n'
-                                                             f'✅ Успешная оплата!')
-            except:
-                pass
-            break
+        try:
+            if await client.is_expired(order_id):  # если счёт просрочен
+                break
+            elif await client.is_success(order_id):  # если оплата прошла успешно
+                Userx.user_change_balance(user_id=user_id, count=amount)
+                try:
+                    await bot.send_message(chat_id=user_id, text=f'ID заказа: {order_id}\n\n'
+                                                                 f'✅ Успешная оплата!')
+                except:
+                    pass
+                break
+        except:
+            pass
         await asyncio.sleep(10)
