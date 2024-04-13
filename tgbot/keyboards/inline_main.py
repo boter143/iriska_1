@@ -89,6 +89,16 @@ def pay_method_finl() -> InlineKeyboardMarkup:
     return keyboard.as_markup()
 
 
+def admin_answer_finl() -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.row(
+        ikb("Ответить", data='admin_answer')
+    )
+
+    return keyboard.as_markup()
+
+
 # Ссылка на оплату
 def pay_link_finl(link) -> InlineKeyboardMarkup:
     keyboard = InlineKeyboardBuilder()

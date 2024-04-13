@@ -7,7 +7,6 @@ from tgbot.database.db_users import Userx
 from tgbot.database.db_video import Videox
 from tgbot.keyboards.reply_main import send_video_frep, menu_frep
 from tgbot.data.config import CHAT_ID, MINUTES_PER_VIDEO
-from tgbot.utils.const_functions import convert_date, get_unix
 
 router = Router(name=__name__)
 
@@ -19,7 +18,7 @@ class sendVideo(StatesGroup):
 # Запуск приёмщика видео
 @router.message(F.text == '📹 Отправить видео')
 async def about_video(message: Message, state: FSMContext):
-    await message.answer('⚠️ Можно отправлять несколько видео за раз\n\n'
+    await message.answer('⚠️ Можно отправлять 2 видео одним сообщением\n\n'
                          'Если хотите остановиться, нажмите на кнопку снизу',
                          reply_markup=send_video_frep())
 
