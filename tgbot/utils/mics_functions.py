@@ -34,7 +34,8 @@ async def send_archive_video_to_all(bot: Bot):
 
                 if Userx.get(user_id=user_id).user_unix > get_unix():
                     try:
-                        await bot.copy_message(from_chat_id=CHAT_ID, chat_id=user_id, message_id=videos_id[index][0])
+                        await bot.copy_message(from_chat_id=CHAT_ID, chat_id=user_id, message_id=videos_id[index][0],
+                                               protect_content=True)
                     except:
                         pass
 
@@ -44,7 +45,7 @@ async def send_archive_video_to_all(bot: Bot):
         else:
             index += 1
 
-        await asyncio.sleep(randint(45, 90))
+        await asyncio.sleep(randint(40, 80))
 
 
 async def send_archive_video_to_user(user_id, amount, index, bot: Bot):

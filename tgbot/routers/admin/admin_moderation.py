@@ -25,21 +25,28 @@ async def start_admin_moderation(call: CallbackQuery, bot: Bot, state: FSMContex
     except:
         await call.answer('⚠️ Ошибка!')
 
-    if not bool(len(all_video_id)):
-        await call.message.answer('⚠️ Нет видео для модерации!', reply_markup=menu_frep())
-        return
-    else:
-        await call.message.answer('⚠️ Если захочешь остановиться, нажми кнопку снизу!', reply_markup=send_video_frep())
-        video_index = 0
-        video = Videox.get(video_id=all_video_id[video_index][0])
-        video_index += 1
-        await state.update_data(video_index=video_index)
+    video_index = 0
 
-        try:
-            await bot.copy_message(from_chat_id=CHAT_ID, chat_id=call.message.chat.id, message_id=video.video_id,
-                                   reply_markup=admin_moderation_finl())
-        except:
-            pass
+    try:
+        video = Videox.get(video_id=all_video_id[video_index][0])
+
+        if video.video_check == 1:
+            while video.video_check == 1:
+                video_index += 1
+                video = Videox.get(video_id=all_video_id[video_index][0])
+
+        await state.update_data(video_index=video_index + 1)
+        await call.message.answer('⚠️ Если захочешь остановиться, нажми кнопку снизу!', reply_markup=send_video_frep())
+    except:
+        await call.message.answer('⚠️ Нет видео для модерации!', reply_markup=menu_frep())
+        await state.clear()
+        return
+
+    try:
+        await bot.copy_message(from_chat_id=CHAT_ID, chat_id=call.message.chat.id, message_id=video.video_id,
+                               reply_markup=admin_moderation_finl())
+    except:
+        pass
 
 
 # Обработка подтверждения видео
@@ -82,8 +89,8 @@ async def admin_moderation_access(call: CallbackQuery, bot: Bot, state: FSMConte
         pass
 
 
-# Обработка удаления видео
-@router.callback_query(F.data == 'moderation_delete')
+# Обработка предупреждения пользователю на видео
+@router.callback_query(F.data == 'moderation_warn')
 async def admin_moderation_ban(call: CallbackQuery, bot: Bot, state: FSMContext):
     state_data = await state.get_data()
     await call.message.delete()
@@ -135,6 +142,50 @@ async def admin_moderation_ban(call: CallbackQuery, bot: Bot, state: FSMContext)
         await bot.delete_message(chat_id=CHAT_ID, message_id=video_ban.video_id)
         await call.message.answer(f'☑️ Видео {video_ban.video_id} было удалено!')
 
+    except ValueError:
+        await call.message.answer('⚠️ Некорректный id видео!\n')
+
+    try:
+        video = Videox.get(video_id=all_video_id[video_index][0])
+        await state.update_data(video_index=video_index)
+    except:
+        await call.message.answer('⚠️ Нет видео для модерации!', reply_markup=menu_frep())
+        await state.clear()
+        return
+
+    try:
+        await bot.copy_message(from_chat_id=CHAT_ID, chat_id=call.message.chat.id, message_id=video.video_id,
+                               reply_markup=admin_moderation_finl())
+    except:
+        pass
+
+
+# Удаление видео
+@router.callback_query(F.data == 'moderation_delete')
+async def admin_moderation_ban(call: CallbackQuery, bot: Bot, state: FSMContext):
+    state_data = await state.get_data()
+    await call.message.delete()
+
+    try:
+        video_index = state_data['video_index']
+        all_video_id = Videox.get_all_id()
+    except:
+        await call.answer('⚠️ Ошибка!')
+        return
+
+    try:
+        video_ban = Videox.get(video_id=all_video_id[video_index - 1][0])
+    except:
+        pass
+
+    user_video_ban = video_ban.user_id
+
+    # Удаление видео везде
+    try:
+        Userx.user_uptime(user_id=user_video_ban, minutes=-3)
+        Videox.video_delete(video_ban.video_id)
+        await bot.delete_message(chat_id=CHAT_ID, message_id=video_ban.video_id)
+        await call.message.answer(f'☑️ Видео {video_ban.video_id} было удалено!')
     except ValueError:
         await call.message.answer('⚠️ Некорректный id видео!\n')
 

@@ -109,3 +109,12 @@ class Videox():
     def video_change_status(video_id):
         with sq.connect(PATH_DATABASE) as con:
             con.execute(f'UPDATE {Videox.storage_name} SET video_check = ? WHERE video_id = ?', (1, video_id,))
+
+    # Средняя длительность всех видео
+    @staticmethod
+    def video_avg_all():
+        with sq.connect(PATH_DATABASE) as con:
+            avg = con.execute(f'SELECT AVG(video_duration) FROM {Videox.storage_name}').fetchall()
+            avg = int(avg[0][0])
+
+            return avg

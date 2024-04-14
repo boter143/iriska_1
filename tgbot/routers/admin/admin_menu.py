@@ -2,6 +2,7 @@ from aiogram import Dispatcher, Router
 from aiogram.filters import Command
 from aiogram.types import Message, FSInputFile
 
+from tgbot.database.db_video import Videox
 from tgbot.keyboards.inline_main import admin_panel_finl
 from tgbot.database.db_users import Userx
 from tgbot.data.config import PATH_DATABASE
@@ -13,8 +14,14 @@ router = Router(name=__name__)
 # Админ-панель
 @router.message(Command(commands=['admin']))
 async def admin_menu(message: Message):
+    try:
+        video_avg = Videox.video_avg_all()
+    except:
+        video_avg = 0
+
     await message.answer(f'<b>👑 Админ-панель</b>\n\n'
-                         f'Кол-во 👥: {Userx.get_all_count()}',
+                         f'Кол-во 👥: {Userx.get_all_count()}\n'
+                         f'AVG 📹: {video_avg} сек',
                          reply_markup=admin_panel_finl())
 
 

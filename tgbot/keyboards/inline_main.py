@@ -28,6 +28,26 @@ def admin_panel_finl() -> InlineKeyboardMarkup:
         ikb("👤 Пользователь", data='admin_user')
     )
 
+    keyboard.row(
+        ikb("📢 Рассылка", data='admin_mailing')
+    )
+
+    return keyboard.as_markup()
+
+
+# Кнопки для админ панели
+def admin_mailing_finl() -> InlineKeyboardMarkup:
+    keyboard = InlineKeyboardBuilder()
+
+    keyboard.row(
+        ikb("✅ Подтвердить", data='admin_mailing_true'),
+        ikb("📝 Изменить", data='admin_mailing_false')
+    )
+
+    keyboard.row(
+        ikb("📢 Отменить", data='admin_mailing_cancel')
+    )
+
     return keyboard.as_markup()
 
 
@@ -57,6 +77,7 @@ def admin_moderation_finl() -> InlineKeyboardMarkup:
     )
 
     keyboard.row(
+        ikb("⚠️ Предупреждение", data='moderation_warn'),
         ikb("⛔️ Забанить", data='moderation_ban')
     )
 
@@ -146,3 +167,5 @@ def archive_tariffs() -> InlineKeyboardMarkup:
     )
 
     return keyboard.as_markup()
+
+#

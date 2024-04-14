@@ -41,7 +41,11 @@ async def filter_video(message: Message, state: FSMContext, bot: Bot):
         video_duration = message.video.duration
 
         # Изменение количества присланных видео
-        new_count_video = int(state_data['count_video']) + 1
+        try:
+            new_count_video = int(state_data['count_video']) + 1
+        except:
+            return
+
         await state.update_data(count_video=new_count_video)
 
         # Проверка на уникальность видео
@@ -76,6 +80,7 @@ async def filter_video(message: Message, state: FSMContext, bot: Bot):
                                  f"Добавлено: {time_up} минут доступа!",
                                  reply_markup=menu_frep())
             await state.clear()
+            return
         elif user.user_ban == 1:
             await message.answer('⛔ Вы были забанены администратором!\n'
                                  'Вы не можете отправлять видео')
