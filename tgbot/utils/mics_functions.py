@@ -67,6 +67,6 @@ async def send_archive_video_to_user(user_id, amount, index, bot: Bot):
         trys += 1
         await asyncio.sleep(randint(3, 10))
 
-    bot.send_message(chat_id=user_id, text=f'✅ Было переслано {amount} видео')
+    await bot.send_message(chat_id=user_id, text=f'✅ Было переслано {amount} видео')
 
     Userx.user_change_index_video(user_id=user_id, count=amount)
